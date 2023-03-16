@@ -36,8 +36,8 @@ func main() {
 
 	// Filter out some stuff we don't show on the navigation anyway
 	filtered := filterArray(simplified, func(input string) bool {
-		return input != "search.adoc" &&
-			input != "index.adoc"
+		avoid := []string{"search.adoc", "index.adoc", "sitesearch.adoc", "changelog_from_commits.adoc", "changelog_legacy.adoc"}
+		return !stringInSlice(input, avoid)
 	})
 
 	// Verify that all filtered files appear in the nav.adoc file at least once
