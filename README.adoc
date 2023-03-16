@@ -1,0 +1,7 @@
+= Antora Navigation Orphans Checker
+
+This project contains a Python and a Go implementation of a program used to check whether the `nav.adoc` file of an Antora documentation set contains orphans, that is, files that exist in the `modules/ROOT/pages` folder but who aren't referenced on the `nav.adoc` file.
+
+== Container
+
+
