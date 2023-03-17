@@ -1,0 +1,4 @@
+* xref:index.adoc[Index page]
+* xref:first.adoc[First page]
+* xref:second.adoc[Second page]
+// the file third.adoc is missing in this file!
