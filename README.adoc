@@ -24,3 +24,12 @@ This project generates a container that can be used as follows:
 --
 podman run --rm --volume "${PWD}":/antora ghcr.io/vshn/antora-nav-orphans-checker:main /antora/docs
 --
+
+== Unit Tests
+
+Run the suite of unit tests:
+
+[source,bash]
+--
+go test
+--

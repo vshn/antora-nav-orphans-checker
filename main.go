@@ -38,6 +38,9 @@ func main() {
 
 }
 
+// Takes a path and assumes it's a valid Antora project. It lists all pages
+// contained in the ROOT module and then walks the file system to verify that
+// all relevant files are referenced in the `nav.adoc` file.
 func check(path string) []string {
 	// We assume that the project follows a standard Antora layout
 	startPath := path + "/modules/ROOT/pages"
