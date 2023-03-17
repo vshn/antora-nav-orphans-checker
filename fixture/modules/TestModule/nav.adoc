@@ -1,0 +1,4 @@
+* xref:index.adoc[]
+* xref:one.adoc[]
+* xref:two.adoc[]
+// File three.adoc is not referenced!

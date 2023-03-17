@@ -11,7 +11,7 @@ Use the tool as follows:
 [source,bash]
 --
 go build
-antora-nav-orphans-checker /path/to/antora/documentation/docs
+antora-nav-orphans-checker /path/to/antora/documentation/docs [additionalModule...]
 --
 
 The tool exits with code 1 if some files are missing. The list of files is printed in the console. If no files are missing, the tool exists with code 0.

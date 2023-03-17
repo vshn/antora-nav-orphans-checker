@@ -5,11 +5,16 @@ import (
 )
 
 func TestShouldFail(t *testing.T) {
-	errors := check("fixture")
+	modules := []string{"ROOT", "TestModule"}
+	errors := checkAntora("fixture", modules)
 
-	if len(errors) == 1 {
+	if len(errors) == 2 {
 		error := errors[0]
 		if error != "third.adoc" {
+			t.Fail()
+		}
+		error = errors[1]
+		if error != "three.adoc" {
 			t.Fail()
 		}
 	} else {

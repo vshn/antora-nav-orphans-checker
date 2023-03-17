@@ -15,6 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 	path := os.Args[1]
+	modules := os.Args[2:]
 
 	// Remove the trailing slash
 	if strings.HasSuffix(path, "/") {
@@ -22,7 +23,8 @@ func main() {
 	}
 
 	// Main block
-	errors := check(path)
+	modules = append(modules, "ROOT")
+	errors := checkAntora(path, modules)
 
 	// If there are errors, print the list of orphan files
 	if len(errors) > 0 {
@@ -33,7 +35,7 @@ func main() {
 	}
 
 	// No errors, all good!
-	fmt.Println("No orphan files in modules/ROOT/nav.adoc")
+	fmt.Println("No orphan files in any `nav.adoc` file")
 	os.Exit(0)
 
 }
@@ -41,9 +43,18 @@ func main() {
 // Takes a path and assumes it's a valid Antora project. It lists all pages
 // contained in the ROOT module and then walks the file system to verify that
 // all relevant files are referenced in the `nav.adoc` file.
-func check(path string) []string {
+func checkAntora(path string, modules []string) []string {
+	errors := []string{}
+	for _, module := range modules {
+		moduleErrors := checkModule(path, module)
+		errors = append(errors, moduleErrors...)
+	}
+	return errors
+}
+
+func checkModule(path string, module string) []string {
 	// We assume that the project follows a standard Antora layout
-	startPath := path + "/modules/ROOT/pages"
+	startPath := path + "/modules/" + module + "/pages"
 	allFiles, err := listAllFiles(startPath)
 	if err != nil {
 		fmt.Println("Cannot list files in provided path " + startPath)
@@ -62,7 +73,7 @@ func check(path string) []string {
 	})
 
 	// Verify that all filtered files appear in the nav.adoc file at least once
-	navPath := path + "/modules/ROOT/nav.adoc"
+	navPath := path + "/modules/" + module + "/nav.adoc"
 	regex := `xref:(.+)\[`
 	errors := walk(navPath, filtered, regex)
 	return errors
