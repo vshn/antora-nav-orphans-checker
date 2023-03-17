@@ -5,6 +5,8 @@ WORKDIR /app
 COPY go.mod ./
 RUN go mod download
 COPY *.go ./
+COPY fixture ./fixture
+RUN go test
 RUN CGO_ENABLED=1 GOOS=linux go build
 
 # Step 2: deployment image
