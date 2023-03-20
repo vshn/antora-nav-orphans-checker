@@ -70,7 +70,7 @@ func check(antoraPath string, module string, filename string) []string {
 	})
 
 	// Verify that all filtered files appear in the file at least once
-	fullPath := antoraPath + filename
+	fullPath := filepath.Join(antoraPath, filename)
 	regex := `xref:(.+)\[`
 
 	// If the file being checked is not nav.adoc, then it is assumed to be a standard
