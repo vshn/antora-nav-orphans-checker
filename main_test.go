@@ -2,19 +2,15 @@ package main
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestShouldFailNavInROOT(t *testing.T) {
 	errors := check("fixture", "ROOT", "/modules/ROOT/nav.adoc")
 
-	if len(errors) == 1 {
-		error := errors[0]
-		if error != "third.adoc" {
-			t.Fail()
-		}
-	} else {
-		t.Fail()
-	}
+	assert.Len(t, errors, 1)
+	assert.Contains(t, errors, "third.adoc")
 }
 
 func TestShouldFailNavInAnotherModule(t *testing.T) {
@@ -27,12 +23,6 @@ func TestShouldFailNavInAnotherModule(t *testing.T) {
 func TestShouldFailDocument(t *testing.T) {
 	errors := check("fixture", "ROOT", "/document.adoc")
 
-	if len(errors) == 1 {
-		error := errors[0]
-		if error != "second.adoc" {
-			t.Fail()
-		}
-	} else {
-		t.Fail()
-	}
+	assert.Len(t, errors, 1)
+	assert.Contains(t, errors, "second.adoc")
 }

@@ -25,25 +25,18 @@ func main() {
 
 	flag.Parse()
 
-	// Remove the trailing slash
-	if strings.HasSuffix(antoraPath, "/") {
-		antoraPath = strings.TrimSuffix(antoraPath, "/")
-	}
-
 	// Main block
 	errors := check(antoraPath, module, filename)
 
 	// If there are errors, print the list of orphan files
 	if len(errors) > 0 {
 		for _, file := range errors {
-			fmt.Fprintf(os.Stdout, "File '%s' not in '%s'\n", file, filename))
+			fmt.Fprintf(os.Stdout, "File '%s' not in '%s'\n", file, filename)
 		}
 		os.Exit(1)
 	}
 
 	// No errors, all good!
-	fmt.Println(fmt.Sprintf("No orphan files in '%s'", filename))
-	os.Exit(0)
 }
 
 // Takes a path and assumes it's a valid Antora project. It lists all pages
