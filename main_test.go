@@ -20,14 +20,8 @@ func TestShouldFailNavInROOT(t *testing.T) {
 func TestShouldFailNavInAnotherModule(t *testing.T) {
 	errors := check("fixture", "AnotherModule", "/modules/AnotherModule/nav.adoc")
 
-	if len(errors) == 1 {
-		error := errors[0]
-		if error != "one.adoc" {
-			t.Fail()
-		}
-	} else {
-		t.Fail()
-	}
+	assert.Len(t, errors, 1)
+	assert.Contains(t, errors, "one.adoc")
 }
 
 func TestShouldFailDocument(t *testing.T) {
