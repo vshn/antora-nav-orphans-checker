@@ -44,7 +44,7 @@ func main() {
 // all relevant files are referenced in the file.
 func check(antoraPath string, module string, filename string) []string {
 	// We assume that the project follows a standard Antora layout
-	startPath := antoraPath + "/modules/" + module + "/pages"
+	startPath := filepath.Join(antoraPath, "modules", module, "pages")
 	allFiles, err := listAllFiles(startPath)
 	if err != nil {
 		fmt.Println("Cannot list files in provided path " + startPath)
