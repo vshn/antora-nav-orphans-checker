@@ -1,0 +1,13 @@
+:author: Test
+:email: test@example.com
+:description: A test document
+:lang: en
+:imagesdir: {docdir}/modules/ROOT/assets/images
+
+include::modules/ROOT/pages/index.adoc[]
+
+include::modules/ROOT/pages/first.adoc[]
+
+// the file second.adoc is missing in this file!
+
+include::modules/ROOT/pages/third.adoc[]

@@ -6,8 +6,8 @@ COPY go.mod ./
 RUN go mod download
 COPY *.go ./
 COPY fixture ./fixture
-RUN go test
-RUN CGO_ENABLED=1 GOOS=linux go build
+RUN go test -mod=mod
+RUN CGO_ENABLED=1 GOOS=linux go build -mod=mod
 
 # Step 2: deployment image
 FROM docker.io/library/alpine:3.17

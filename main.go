@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,40 +11,40 @@ import (
 
 func main() {
 	// Needs as argument a path to an Antora project
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide a path to an Antora project")
-		os.Exit(1)
-	}
-	path := os.Args[1]
+	var antoraPath string
+	flag.StringVar(&antoraPath, "antoraPath", "/docs", "Path to Antora document sources")
 
-	// Remove the trailing slash
-	if strings.HasSuffix(path, "/") {
-		path = strings.TrimSuffix(path, "/")
-	}
+	// Module to check. If none passed, it is assumed to be ROOT
+	var module string
+	flag.StringVar(&module, "module", "ROOT", "Module to analyze")
+
+	// File to parse and analyze; if none is passed, it is assumed to
+	// be a standard Antora navigation file at the ROOT module.
+	var filename string
+	flag.StringVar(&filename, "filename", "/modules/ROOT/nav.adoc", "File to analyze")
+
+	flag.Parse()
 
 	// Main block
-	errors := check(path)
+	errors := check(antoraPath, module, filename)
 
 	// If there are errors, print the list of orphan files
 	if len(errors) > 0 {
 		for _, file := range errors {
-			fmt.Println(fmt.Sprintf("File '%s' not in 'nav.adoc'", file))
+			fmt.Fprintf(os.Stderr, "File '%s' not in '%s'\n", file, filename)
 		}
 		os.Exit(1)
 	}
 
 	// No errors, all good!
-	fmt.Println("No orphan files in modules/ROOT/nav.adoc")
-	os.Exit(0)
-
 }
 
 // Takes a path and assumes it's a valid Antora project. It lists all pages
-// contained in the ROOT module and then walks the file system to verify that
-// all relevant files are referenced in the `nav.adoc` file.
-func check(path string) []string {
+// contained in the module and then walks the file system to verify that
+// all relevant files are referenced in the file.
+func check(antoraPath string, module string, filename string) []string {
 	// We assume that the project follows a standard Antora layout
-	startPath := path + "/modules/ROOT/pages"
+	startPath := filepath.Join(antoraPath, "modules", module, "pages")
 	allFiles, err := listAllFiles(startPath)
 	if err != nil {
 		fmt.Println("Cannot list files in provided path " + startPath)
@@ -61,29 +62,36 @@ func check(path string) []string {
 		return !stringInSlice(input, avoid)
 	})
 
-	// Verify that all filtered files appear in the nav.adoc file at least once
-	navPath := path + "/modules/ROOT/nav.adoc"
+	// Verify that all filtered files appear in the file at least once
+	fullPath := filepath.Join(antoraPath, filename)
 	regex := `xref:(.+)\[`
-	errors := walk(navPath, filtered, regex)
+
+	// If the file being checked is not nav.adoc, then it is assumed to be a standard
+	// Asciidoc file, where files are referenced using `include::...[]` instead of `xref:...[]`
+	if !strings.HasSuffix(fullPath, "nav.adoc") {
+		regex = `include::(.+)\[`
+	}
+
+	// Gather all errors
+	errors := walk(fullPath, filtered, regex)
 	return errors
 }
 
-// Checks the file nav.adoc for the existence of at least one
+// Checks the index file for the existence of at least one
 // reference to each one of the files passed in the second parameter,
 // using the regular expresssion as parameter.
-func walk(navPath string, files []string, regex string) []string {
+func walk(fullPath string, files []string, regex string) []string {
 	var errors []string
 	re := regexp.MustCompile(regex)
-	contents, err := os.ReadFile(navPath)
+	contents, err := os.ReadFile(fullPath)
 	if err == nil {
 		stringContents := string(contents)
 		matches := re.FindAllString(stringContents, -1)
 		errors = filterArray(files, func(file string) bool {
-			match := fmt.Sprintf("xref:%s[", file)
-			return !stringInSlice(match, matches)
+			return !substringInSlice(file, matches)
 		})
 	} else {
-		errors = append(errors, "Cannot read file "+navPath)
+		errors = append(errors, "Cannot read file "+fullPath)
 	}
 	return errors
 }
@@ -129,6 +137,16 @@ func mapArray(array []string, f func(string) string) []string {
 func stringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+// Checks whether a string appears in an array complete or as a substring
+func substringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a || strings.Index(b, a) != -1 {
 			return true
 		}
 	}
