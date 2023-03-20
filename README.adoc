@@ -10,11 +10,39 @@ Use the tool as follows:
 
 [source,bash]
 --
-go build
-antora-nav-orphans-checker /path/to/antora/documentation/docs
+$ go build
+$ ./antora-nav-orphans-checker -help
+Usage of ./antora-nav-orphans-checker:
+  -antoraPath string
+        Path to Antora document sources (default "/docs")
+  -filename string
+        File to analyze (default "/modules/ROOT/nav.adoc")
+  -module string
+        Module to analyze (default "ROOT")
+--
+
+By default the tool checks the "ROOT" module in the "/docs" folder.
+
+[source,bash]
+--
+./antora-nav-orphans-checker -antoraPath fixture
 --
 
 The tool exits with code 1 if some files are missing. The list of files is printed in the console. If no files are missing, the tool exists with code 0.
+
+You can specify other modules (you must specify the corresponding `-filename` argument in that case too):
+
+[source,bash]
+--
+./antora-nav-orphans-checker -antoraPath fixture -module AnotherModule -filename /modules/AnotherModule/nav.adoc
+--
+
+The `-filename` argument can be a different file to check; in this case it is assumed to be a standard Asciidoc file, where files are referenced with `include::` instead of `xref:`.
+
+[source,bash]
+--
+./antora-nav-orphans-checker -antoraPath fixture -filename /document.adoc
+--
 
 == Container
 
@@ -22,7 +50,7 @@ This project generates a container that can be used as follows:
 
 [source,bash]
 --
-podman run --rm --volume "${PWD}":/antora ghcr.io/vshn/antora-nav-orphans-checker:main /antora/docs
+podman run --rm --volume "${PWD}":/antora ghcr.io/vshn/antora-nav-orphans-checker:main -antoraPath /antora/docs
 --
 
 == Unit Tests
