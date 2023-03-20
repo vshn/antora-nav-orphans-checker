@@ -36,7 +36,7 @@ func main() {
 	// If there are errors, print the list of orphan files
 	if len(errors) > 0 {
 		for _, file := range errors {
-			fmt.Println(fmt.Sprintf("File '%s' not in '%s'", file, filename))
+			fmt.Fprintf(os.Stdout, "File '%s' not in '%s'\n", file, filename))
 		}
 		os.Exit(1)
 	}
