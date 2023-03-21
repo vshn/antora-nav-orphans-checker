@@ -2,12 +2,12 @@
 FROM docker.io/library/alpine:3.17 AS build
 RUN apk update && apk upgrade && apk add --no-cache go
 WORKDIR /app
-COPY go.mod ./
+COPY ["go.mod", "go.sum", "./"]
 RUN go mod download
 COPY *.go ./
 COPY fixture ./fixture
-RUN go test -mod=mod
-RUN CGO_ENABLED=1 GOOS=linux go build -mod=mod
+RUN go test
+RUN GOOS=linux go build
 
 # Step 2: deployment image
 FROM docker.io/library/alpine:3.17
