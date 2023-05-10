@@ -1,5 +1,5 @@
 # Step 1: build binary
-FROM docker.io/library/alpine:3.17 AS build
+FROM docker.io/library/alpine:3.18 AS build
 RUN apk update && apk upgrade && apk add --no-cache go
 WORKDIR /app
 COPY ["go.mod", "go.sum", "./"]
@@ -10,7 +10,7 @@ RUN go test
 RUN GOOS=linux go build
 
 # Step 2: deployment image
-FROM docker.io/library/alpine:3.17
+FROM docker.io/library/alpine:3.18
 WORKDIR /app
 COPY --from=build /app/antora-nav-orphans-checker /app/antora-nav-orphans-checker
 USER 1001
