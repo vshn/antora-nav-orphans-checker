@@ -7,7 +7,7 @@ RUN go mod download
 COPY *.go ./
 COPY fixture ./fixture
 RUN go test
-RUN GOOS=linux go build
+RUN GOOS=linux GOARCH=$TARGETARCH go build
 
 # Step 2: deployment image
 FROM docker.io/library/alpine:3.18
